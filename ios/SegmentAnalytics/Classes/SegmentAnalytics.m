@@ -3,7 +3,7 @@
 //
 
 #import "SegmentAnalytics.h"
-#import "RCTConvert.h"
+#import <React/RCTConvert.h>
 #import <Analytics/SEGAnalytics.h>
 #import <Foundation/Foundation.h>
 
@@ -13,7 +13,6 @@ RCT_EXPORT_MODULE()
 
 RCT_EXPORT_METHOD(setup:(NSString*)configKey) {
     SEGAnalyticsConfiguration *configuration = [SEGAnalyticsConfiguration configurationWithWriteKey:configKey];
-    configuration.flushAt = 1;
     configuration.recordScreenViews = NO;
     configuration.shouldUseLocationServices = true;
     configuration.trackApplicationLifecycleEvents = YES;
