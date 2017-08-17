@@ -2,61 +2,127 @@
 //  Copyright (c) 2016 OnCircle Inc. All rights reserved.
 //
 
-#import "SegmentAnalytics.h"
 #import <React/RCTConvert.h>
 #import <Analytics/SEGAnalytics.h>
 #import <Foundation/Foundation.h>
 
-#import <Segment-GoogleAnalytics/SEGGoogleAnalyticsIntegrationFactory.h>
-#import <Segment-Mixpanel/SEGMixpanelIntegrationFactory.h>
-#import <Segment-Amplitude/SEGAmplitudeIntegrationFactory.h>
+#import "SegmentAnalytics.h"
+#import "EJoyIntergration.h"
 
 @implementation SegmentAnalytics
 
 RCT_EXPORT_MODULE()
 
-RCT_EXPORT_METHOD(setup:(NSString*)configKey) {
-    SEGAnalyticsConfiguration *configuration = [SEGAnalyticsConfiguration configurationWithWriteKey:configKey];
-    configuration.recordScreenViews = NO;
-    configuration.shouldUseLocationServices = true;
-    configuration.trackApplicationLifecycleEvents = YES;
+RCT_EXPORT_METHOD(setup:(NSString *)key :(NSDictionary *)options)
+{
+    SEGAnalyticsConfiguration *config = [SEGAnalyticsConfiguration configurationWithWriteKey:key];
+    
+    config.enableAdvertisingTracking = [RCTConvert BOOL:options[@"enableAdvertisingTracking"]];
+    config.flushAt = [RCTConvert NSUInteger:options[@"flushAt"]];
+    config.recordScreenViews = [RCTConvert BOOL:options[@"recordScreenViews"]];
+    config.shouldUseBluetooth = [RCTConvert BOOL:options[@"shouldUseBluetooth"]];
+    config.shouldUseLocationServices = [RCTConvert BOOL:options[@"shouldUseLocationServices"]];
+    config.trackApplicationLifecycleEvents = [RCTConvert BOOL:options[@"trackApplicationLifecycleEvents"]];
+    config.trackAttributionData = [RCTConvert BOOL:options[@"trackAttributionData"]];
+    config.trackDeepLinks = [RCTConvert BOOL:options[@"trackDeepLinks"]];
 
-    [configuration use:[SEGGoogleAnalyticsIntegrationFactory instance]];
-    [configuration use:[SEGMixpanelIntegrationFactory instance]];
-    [configuration use:[SEGAmplitudeIntegrationFactory instance]];
-
-    [SEGAnalytics setupWithConfiguration:configuration];
+    BOOL debug = [RCTConvert BOOL:options[@"debug"]];
+    
+#ifdef SEGTaplyticsIntegrationFactoryImported
+    [config use:[SEGTaplyticsIntegrationFactory instance]];
+#endif
+    
+#ifdef SEGAdjustIntegrationFactoryImported
+    [config use:[SEGAdjustIntegrationFactory instance]];
+#endif
+    
+#ifdef SEGGoogleAnalyticsIntegrationFactoryImported
+    [config use:[SEGGoogleAnalyticsIntegrationFactory instance]];
+#endif
+    
+#ifdef SEGComScoreIntegrationFactoryImported
+    [config use:[SEGComScoreIntegrationFactory instance]];
+#endif
+    
+#ifdef SEGAmplitudeIntegrationFactoryImported
+    [config use:[SEGAmplitudeIntegrationFactory instance]];
+#endif
+    
+#ifdef SEGFacebookAppEventsIntegrationFactoryImported
+    [config use:[SEGFacebookAppEventsIntegrationFactory instance]];
+#endif
+    
+#ifdef SEGMixpanelIntegrationFactoryImported
+    [config use:[SEGMixpanelIntegrationFactory instance]];
+#endif
+    
+#ifdef SEGLocalyticsIntegrationFactoryImported
+    [config use:[SEGLocalyticsIntegrationFactory instance]];
+#endif 
+    
+#ifdef SEGFlurryIntegrationFactoryImported
+    [config use:[SEGFlurryIntegrationFactory instance]];
+#endif
+    
+#ifdef SEGQuantcastIntegrationFactoryImported
+    [config use:[SEGQuantcastIntegrationFactory instance]];
+#endif
+    
+#ifdef SEGCrittercismIntegrationFactoryImported
+    [config use:[SEGCrittercismIntegrationFactory instance]];
+#endif 
+    
+#ifdef SEGFirebaseIntegrationFactoryImported
+    [config use:[SEGFirebaseIntegrationFactory instance]];
+#endif
+    
+    [SEGAnalytics setupWithConfiguration:config];
+    [SEGAnalytics debug:debug];
 }
 
-RCT_EXPORT_METHOD(identify:(NSString*)userId traits:(NSDictionary *)traits) {
-    [[SEGAnalytics sharedAnalytics] identify:userId traits:[self toStringDictionary:traits]];
+RCT_EXPORT_METHOD(identify:(NSString *)userId :(NSDictionary *)traits)
+{
+    [[SEGAnalytics sharedAnalytics] identify:userId traits:traits];
 }
 
-RCT_EXPORT_METHOD(track:(NSString*)trackText properties:(NSDictionary *)properties) {
-    [[SEGAnalytics sharedAnalytics] track:trackText
-                               properties:[self toStringDictionary:properties]];
+RCT_EXPORT_METHOD(track:(NSString *)event properties:(NSDictionary *)properties)
+{
+    [[SEGAnalytics sharedAnalytics] track:event properties:properties];
 }
 
-RCT_EXPORT_METHOD(screen:(NSString*)screenName properties:(NSDictionary *)properties) {
-    [[SEGAnalytics sharedAnalytics] screen:screenName properties:[self toStringDictionary:properties]];
+RCT_EXPORT_METHOD(screen:(NSString *)name :(NSDictionary *)properties)
+{
+    [[SEGAnalytics sharedAnalytics] screen:name properties:properties];
 }
 
-RCT_EXPORT_METHOD(alias:(NSString*)newId) {
+RCT_EXPORT_METHOD(group:(NSString *)groupId :(NSDictionary *)traits)
+{
+    [[SEGAnalytics sharedAnalytics] group:groupId traits:traits];
+}
+
+RCT_EXPORT_METHOD(alias:(NSString *)newId)
+{
     [[SEGAnalytics sharedAnalytics] alias:newId];
 }
 
--(NSMutableDictionary*) toStringDictionary: (NSDictionary *)properties {
-    NSMutableDictionary *stringDictionary = [[NSMutableDictionary alloc] init];
-    for (NSString* key in [properties allKeys]) {
-        if ([[properties objectForKey:key] isKindOfClass:[NSMutableDictionary class]]) {
-            id value = [self toStringDictionary:[properties objectForKey:key]];
-            [stringDictionary setObject:value forKey:[RCTConvert NSString:key]];
-        } else {
-            id value = [properties objectForKey:key];
-            [stringDictionary setObject:value forKey:[RCTConvert NSString:key]];
-        }
-    }
-    return stringDictionary;
+RCT_EXPORT_METHOD(reset)
+{
+    [[SEGAnalytics sharedAnalytics] reset];
+}
+
+RCT_EXPORT_METHOD(flush)
+{
+    [[SEGAnalytics sharedAnalytics] flush];
+}
+
+RCT_EXPORT_METHOD(enable)
+{
+    [[SEGAnalytics sharedAnalytics] enable];
+}
+
+RCT_EXPORT_METHOD(disable)
+{
+    [[SEGAnalytics sharedAnalytics] disable];
 }
 
 @end

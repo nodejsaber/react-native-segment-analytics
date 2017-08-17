@@ -5,23 +5,45 @@ import {
 const {SegmentAnalytics} = NativeModules;
 
 export default {
-  setup: function (configKey: string) {
-    SegmentAnalytics.setup(configKey);
+  setup: function (key, options = {}) {
+    if (!options.flushAt) options.flushAt = 20
+
+    SegmentAnalytics.setup(key, options)
   },
 
-  identify: function (userId: string, traits: Object) {
-    SegmentAnalytics.identify(userId, traits);
+  identify: function (userId, traits = {}) {
+    SegmentAnalytics.identify(userId, traits)
   },
 
-  track: function (trackText: string, properties: Object) {
-    SegmentAnalytics.track(trackText, properties);
+  track: function (event, properties = {}) {
+    SegmentAnalytics.track(event, properties)
   },
 
-  screen: function (screenName: string, properties: Object) {
-    SegmentAnalytics.screen(screenName, properties);
+  screen: function (name, properties = {}) {
+    SegmentAnalytics.screen(name, properties)
   },
 
-  alias: function (newId: string) {
-    SegmentAnalytics.alias(newId);
+  group: function (groupId, traits = {}) {
+    SegmentAnalytics.group(groupId, traits)
+  },
+
+  alias: function (newId) {
+    SegmentAnalytics.alias(newId)
+  },
+
+  reset: function () {
+    SegmentAnalytics.reset()
+  },
+
+  flush: function () {
+    SegmentAnalytics.flush()
+  },
+
+  enable: function () {
+    SegmentAnalytics.enable()
+  },
+
+  disable: function () {
+    SegmentAnalytics.disable()
   }
-};
+}

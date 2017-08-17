@@ -1,7 +1,7 @@
 {
   "name": "ejoy-analytics",
   "description": "Event traking with Segment IO",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "homepage": "https://github.com/ejoy-jsc/react-native-segment-analytics.git",
   "repository": {
     "type": "git",
