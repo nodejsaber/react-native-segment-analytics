@@ -7,6 +7,10 @@
 #import <Analytics/SEGAnalytics.h>
 #import <Foundation/Foundation.h>
 
+#import <Segment-GoogleAnalytics/SEGGoogleAnalyticsIntegrationFactory.h>
+#import <Segment-Mixpanel/SEGMixpanelIntegrationFactory.h>
+#import <Segment-Amplitude/SEGAmplitudeIntegrationFactory.h>
+
 @implementation SegmentAnalytics
 
 RCT_EXPORT_MODULE()
@@ -16,6 +20,11 @@ RCT_EXPORT_METHOD(setup:(NSString*)configKey) {
     configuration.recordScreenViews = NO;
     configuration.shouldUseLocationServices = true;
     configuration.trackApplicationLifecycleEvents = YES;
+
+    [configuration use:[SEGGoogleAnalyticsIntegrationFactory instance]];
+    [configuration use:[SEGMixpanelIntegrationFactory instance]];
+    [configuration use:[SEGAmplitudeIntegrationFactory instance]];
+
     [SEGAnalytics setupWithConfiguration:configuration];
 }
 
