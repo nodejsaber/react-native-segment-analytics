@@ -27,6 +27,20 @@ RCT_EXPORT_METHOD(setup:(NSString *)key :(NSDictionary *)options)
     config.trackDeepLinks = [RCTConvert BOOL:options[@"trackDeepLinks"]];
 
     BOOL debug = [RCTConvert BOOL:options[@"debug"]];
+
+    NSString* ejoyUrl = [RCTConvert NSString:options[@"ejoyUrl"]];
+
+    if(ejoyUrl.length)
+    {
+      // Set a custom request factory which allows you to modify the way the library creates an HTTP request.
+      config.requestFactory = ^(NSURL *url) {
+        NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
+        components.host = ejoyUrl;
+        NSURL *transformedURL = components.URL;
+        return [NSMutableURLRequest requestWithURL:transformedURL];
+      };
+    }
+
     
 #ifdef SEGTaplyticsIntegrationFactoryImported
     [config use:[SEGTaplyticsIntegrationFactory instance]];
