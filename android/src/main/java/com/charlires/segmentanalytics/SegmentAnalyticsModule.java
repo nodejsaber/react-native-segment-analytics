@@ -32,7 +32,7 @@ public class SegmentAnalyticsModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void setup(String configKey) {
+    public void setup(String configKey, ReadableMap properties) {
         try {
             Analytics analytics = new Analytics.Builder(this.getReactApplicationContext(), configKey)
                     .trackApplicationLifecycleEvents() // Enable this to record certain application events automatically!
