@@ -44,36 +44,37 @@ public class SegmentAnalyticsModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void setup(String configKey, ReadableMap options) {
         try {
-            String _ejoyUrl = options.ejoyUrl != null ? options.ejoyUrl : null;
-            String _trackApplicationLifecycleEvents = options.trackApplicationLifecycleEvents != null ?
-            options.trackApplicationLifecycleEvents : true;
-
-            Log.w(LOG_TAG, "ejoyURl: " + _ejoyUrl);
+            // Map _options = toMap(options);
+            final String ejoyUrl = options.getString("ejoyUrl");
+            Boolean trackApplicationLifecycleEvents = options.getBoolean("trackApplicationLifecycleEvents");
+            trackApplicationLifecycleEvents = trackApplicationLifecycleEvents != null ?
+            trackApplicationLifecycleEvents : true;
+            Log.w(LOG_TAG, "ejoyURl: " + ejoyUrl);
             
-            Analytics analytics = new Analytics.Builder(this.getReactApplicationContext(), configKey)
+            Analytics.Builder builder = new Analytics.Builder(this.getReactApplicationContext(), configKey)
                     .use(MixpanelIntegration.FACTORY)
                     .use(GoogleAnalyticsIntegration.FACTORY)
-                    .recordScreenViews(); // Enable this to record screen views automatically!
-                    
-                    if (_trackApplicationLifecycleEvents == true) {
-                        analytics.trackApplicationLifecycleEvents();
+                    .recordScreenViews();
+
+                    if(trackApplicationLifecycleEvents == true) {
+                        builder.trackApplicationLifecycleEvents();
                     }
 
-                    if (_ejoyUrl != null) {
-                        analytics.connectionFactory(new ConnectionFactory() {
+                    if (ejoyUrl != null) {
+                        builder.connectionFactory(new ConnectionFactory() {
                             @Override protected HttpURLConnection openConnection(String url) throws IOException {
                               String path = Uri.parse(url).getPath();
                               // Replace YOUR_PROXY_HOST with the address of your proxy, e.g. https://aba64da6.ngrok.io.
-                              return super.openConnection(_ejoyUrl + path);
+                              return super.openConnection(ejoyUrl + path);
                             }
                           });
                     }
 
-                    analytics.build();
+                    Analytics analytics = builder.build();
                     
             Analytics.setSingletonInstance(analytics);
         } catch (Exception e) {
-            Log.e("SegmentAnalyticsModule", "Failed to setup. " + e.getMessage());
+            Log.e(LOG_TAG, "Failed to setup. " + e.getMessage());
         }
     }
 
