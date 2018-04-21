@@ -1,5 +1,6 @@
 package com.charlires.segmentanalytics;
 
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -11,16 +12,25 @@ import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.ReadableType;
 import com.segment.analytics.Analytics;
+import com.segment.analytics.ConnectionFactory;
 import com.segment.analytics.Properties;
 import com.segment.analytics.Traits;
 
+
+import com.segment.analytics.android.integrations.google.analytics.GoogleAnalyticsIntegration;
+import com.segment.analytics.android.integrations.mixpanel.MixpanelIntegration;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 
 public class SegmentAnalyticsModule extends ReactContextBaseJavaModule {
+
+    private static final String LOG_TAG = "ejoy-analytics";
 
     public SegmentAnalyticsModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -32,12 +42,35 @@ public class SegmentAnalyticsModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void setup(String configKey, ReadableMap properties) {
+    public void setup(String configKey, ReadableMap options) {
         try {
+            String _ejoyUrl = options.ejoyUrl != null ? options.ejoyUrl : null;
+            String _trackApplicationLifecycleEvents = options.trackApplicationLifecycleEvents != null ?
+            options.trackApplicationLifecycleEvents : true;
+
+            Log.w(LOG_TAG, "ejoyURl: " + _ejoyUrl);
+            
             Analytics analytics = new Analytics.Builder(this.getReactApplicationContext(), configKey)
-                    .trackApplicationLifecycleEvents() // Enable this to record certain application events automatically!
-                    .recordScreenViews() // Enable this to record screen views automatically!
-                    .build();
+                    .use(MixpanelIntegration.FACTORY)
+                    .use(GoogleAnalyticsIntegration.FACTORY)
+                    .recordScreenViews(); // Enable this to record screen views automatically!
+                    
+                    if (_trackApplicationLifecycleEvents == true) {
+                        analytics.trackApplicationLifecycleEvents();
+                    }
+
+                    if (_ejoyUrl != null) {
+                        analytics.connectionFactory(new ConnectionFactory() {
+                            @Override protected HttpURLConnection openConnection(String url) throws IOException {
+                              String path = Uri.parse(url).getPath();
+                              // Replace YOUR_PROXY_HOST with the address of your proxy, e.g. https://aba64da6.ngrok.io.
+                              return super.openConnection(_ejoyUrl + path);
+                            }
+                          });
+                    }
+
+                    analytics.build();
+                    
             Analytics.setSingletonInstance(analytics);
         } catch (Exception e) {
             Log.e("SegmentAnalyticsModule", "Failed to setup. " + e.getMessage());
