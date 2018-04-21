@@ -44,19 +44,21 @@ public class SegmentAnalyticsModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void setup(String configKey, ReadableMap options) {
         try {
-            // Map _options = toMap(options);
-            final String ejoyUrl = options.getString("ejoyUrl");
-            Boolean trackApplicationLifecycleEvents = options.getBoolean("trackApplicationLifecycleEvents");
-            trackApplicationLifecycleEvents = trackApplicationLifecycleEvents != null ?
-            trackApplicationLifecycleEvents : true;
-            Log.w(LOG_TAG, "ejoyURl: " + ejoyUrl);
+            Map _options = toMap(options);
+            final Object _ejoyUrl =  _options.get("ejoyUrl");
+            final String ejoyUrl = _ejoyUrl != null ?  _ejoyUrl.toString() : null;
+            Object trackLifecycle =  _options.get("trackApplicationLifecycleEvents");
+            Boolean _trackLifecycle = trackLifecycle != null ?
+             (Boolean) trackLifecycle : true;
+
+            Log.w(LOG_TAG, "ejoyURl: " + ejoyUrl + " " + _trackLifecycle);
             
             Analytics.Builder builder = new Analytics.Builder(this.getReactApplicationContext(), configKey)
                     .use(MixpanelIntegration.FACTORY)
                     .use(GoogleAnalyticsIntegration.FACTORY)
                     .recordScreenViews();
 
-                    if(trackApplicationLifecycleEvents == true) {
+                    if(_trackLifecycle == true) {
                         builder.trackApplicationLifecycleEvents();
                     }
 
@@ -73,10 +75,12 @@ public class SegmentAnalyticsModule extends ReactContextBaseJavaModule {
                     Analytics analytics = builder.build();
                     
             Analytics.setSingletonInstance(analytics);
+            Log.w(LOG_TAG, "setup analytics complete");
         } catch (Exception e) {
             Log.e(LOG_TAG, "Failed to setup. " + e.getMessage());
         }
     }
+
 
     @ReactMethod
     public void identify(String userId, ReadableMap traits) {
