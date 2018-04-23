@@ -65,7 +65,7 @@ public class SegmentAnalyticsModule extends ReactContextBaseJavaModule {
                         builder.connectionFactory(new ConnectionFactory() {
                             @Override protected HttpURLConnection openConnection(String url) throws IOException {
                               String path = Uri.parse(url).getPath();
-                              Log.w(LOG_TAG, "ejoyURl: " + ejoyUrl + " path: " + path);
+                              Log.w(LOG_TAG, "rootUrl: " + url + " ejoyURl: " + ejoyUrl + " path: " + path);
                               // Replace YOUR_PROXY_HOST with the address of your proxy, e.g. https://aba64da6.ngrok.io.
                               return super.openConnection(ejoyUrl + path);
                             }
