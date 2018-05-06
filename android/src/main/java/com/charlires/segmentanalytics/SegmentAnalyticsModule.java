@@ -55,6 +55,8 @@ public class SegmentAnalyticsModule extends ReactContextBaseJavaModule {
             Map _options = toMap(options);
             final Object _ejoyUrl =  _options.get("ejoyUrl");
             final String ejoyUrl = _ejoyUrl != null ?  _ejoyUrl.toString() : null;
+            final Object _customPath = _options.get("customPath");
+            final String customPath = _ejoyUrl != null ? _ejoyUrl.toString() : null;
             Object trackLifecycle =  _options.get("trackApplicationLifecycleEvents");
             Boolean _trackLifecycle = trackLifecycle != null ?
              (Boolean) trackLifecycle : true;
@@ -72,7 +74,7 @@ public class SegmentAnalyticsModule extends ReactContextBaseJavaModule {
                     if (ejoyUrl != null) {
                         builder.connectionFactory(new ConnectionFactory() {
                             @Override protected HttpURLConnection openConnection(String url) throws IOException {
-                              String path = Uri.parse(url).getPath();
+                              String path = customPath != null ? customPath : Uri.parse(url).getPath();
                               Log.w(LOG_TAG, "rootUrl: " + url + " ejoyURl: " + ejoyUrl + " path: " + path);
                               // Replace YOUR_PROXY_HOST with the address of your proxy, e.g. https://aba64da6.ngrok.io.
                               return super.openConnection(ejoyUrl + path);
