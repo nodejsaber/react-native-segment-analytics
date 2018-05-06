@@ -16,7 +16,7 @@ import com.segment.analytics.ConnectionFactory;
 import com.segment.analytics.Properties;
 import com.segment.analytics.Traits;
 
-
+ 
 import com.segment.analytics.android.integrations.google.analytics.GoogleAnalyticsIntegration;
 import com.segment.analytics.android.integrations.mixpanel.MixpanelIntegration;
 
