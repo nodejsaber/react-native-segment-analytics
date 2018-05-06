@@ -32,6 +32,8 @@ public class SegmentAnalyticsModule extends ReactContextBaseJavaModule {
 
     private static final String LOG_TAG = "ejoy-analytics";
 
+    private boolean singletonExisted = false;
+
     public SegmentAnalyticsModule(ReactApplicationContext reactContext) {
         super(reactContext);
     }
@@ -43,6 +45,12 @@ public class SegmentAnalyticsModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void setup(String configKey, ReadableMap options) {
+
+        if (singletonExisted == true) {
+            Log.w("Analytics instant already exist!");
+            return;
+        }
+
         try {
             Map _options = toMap(options);
             final Object _ejoyUrl =  _options.get("ejoyUrl");
@@ -74,6 +82,7 @@ public class SegmentAnalyticsModule extends ReactContextBaseJavaModule {
 
                     Analytics analytics = builder.build();
                     
+            singletonExisted = true;
             Analytics.setSingletonInstance(analytics);
             Log.w(LOG_TAG, "setup analytics complete");
         } catch (Exception e) {
@@ -91,7 +100,7 @@ public class SegmentAnalyticsModule extends ReactContextBaseJavaModule {
                 null
             );
         } catch (Exception e) {
-            Log.e("SegmentAnalyticsModule", "Failed to identify " + userId + ". " + e.getMessage());
+            Log.e(LOG_TAG, "Failed to identify " + userId + ". " + e.getMessage());
         }
     }
 
@@ -103,7 +112,7 @@ public class SegmentAnalyticsModule extends ReactContextBaseJavaModule {
                 this.toProperties(properties)
             );
         } catch (Exception e) {
-            Log.e("SegmentAnalyticsModule", "Failed to track " + trackText + ". " + e.getMessage());
+            Log.e(LOG_TAG, "Failed to track " + trackText + ". " + e.getMessage());
         }
     }
 
@@ -115,7 +124,7 @@ public class SegmentAnalyticsModule extends ReactContextBaseJavaModule {
                 screenName,
                 this.toProperties(properties));
         } catch (Exception e) {
-            Log.e("SegmentAnalyticsModule", "Failed to screen " + screenName + ". " + e.getMessage());
+            Log.e(LOG_TAG, "Failed to screen " + screenName + ". " + e.getMessage());
         }
     }
 
@@ -127,7 +136,7 @@ public class SegmentAnalyticsModule extends ReactContextBaseJavaModule {
                 null
             );
         } catch (Exception e) {
-            Log.e("SegmentAnalyticsModule", "Failed to alias " + newId + ". " + e.getMessage());
+            Log.e(LOG_TAG, "Failed to alias " + newId + ". " + e.getMessage());
         }
     }
 
