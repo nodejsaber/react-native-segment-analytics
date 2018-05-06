@@ -47,7 +47,7 @@ public class SegmentAnalyticsModule extends ReactContextBaseJavaModule {
     public void setup(String configKey, ReadableMap options) {
 
         if (singletonExisted == true) {
-            Log.w("Analytics instant already exist!");
+            Log.w(LOG_TAG, "Analytics instant already exist!");
             return;
         }
 
