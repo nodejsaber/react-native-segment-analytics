@@ -56,7 +56,7 @@ public class SegmentAnalyticsModule extends ReactContextBaseJavaModule {
             final Object _ejoyUrl =  _options.get("ejoyUrl");
             final String ejoyUrl = _ejoyUrl != null ?  _ejoyUrl.toString() : null;
             final Object _customPath = _options.get("customPath");
-            final String customPath = _ejoyUrl != null ? _ejoyUrl.toString() : null;
+            final String customPath = _ejoyUrl != null ? _customPath.toString() : null;
             Object trackLifecycle =  _options.get("trackApplicationLifecycleEvents");
             Boolean _trackLifecycle = trackLifecycle != null ?
              (Boolean) trackLifecycle : true;
