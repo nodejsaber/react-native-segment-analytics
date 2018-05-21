@@ -3,8 +3,13 @@
 //
 
 #import <React/RCTConvert.h>
-#import <Analytics/SEGAnalytics.h>
 #import <Foundation/Foundation.h>
+
+#if __has_include(<Analytics/SEGAnalytics.h>)
+#import <Analytics/SEGAnalytics.h>
+#else
+#import "SEGAnalytics.h"
+#endif
 
 #import "SegmentAnalytics.h"
 #import "EJoyIntergration.h"
