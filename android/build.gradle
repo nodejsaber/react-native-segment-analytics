@@ -1,7 +1,7 @@
 def _ext = rootProject.ext
 
 def _reactNativeVersion = _ext.has('reactNative') ? _ext.reactNative : '+'
-def _supportAppCompat = _.ext.has('supportAppCompat') ? _ext.supportAppCompat : '26.1.0'
+def _supportLibVersion = _.ext.has('supportLibVersion') ? _ext.supportLibVersion : '26.1.0'
 def _compileSdkVersion = _ext.has('compileSdkVersion') ? _ext.compileSdkVersion : 26
 def _buildToolsVersion = _ext.has('buildToolsVersion') ? _ext.buildToolsVersion : '26.0.3'
 def _minSdkVersion = _ext.has('minSdkVersion') ? _ext.minSdkVersion : 16
@@ -41,7 +41,7 @@ repositories {
 
 dependencies {
     compile "com.facebook.react:react-native:${_reactNativeVersion}"
-    compile "com.android.support:appcompat-v7:${_supportAppCompat}"
+    compile "com.android.support:appcompat-v7:${_supportLibVersion}"
     compile 'com.segment.analytics.android:analytics:4.+'
     compile ('com.segment.analytics.android.integrations:mixpanel:+'){
         transitive = true
