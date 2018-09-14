@@ -10,9 +10,9 @@ buildscript {
         mavenCentral()
     }
 
-    dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.+'
-    }
+    // dependencies {
+    //     classpath 'com.android.tools.build:gradle:3.1.+'
+    // }
 }
 
 
